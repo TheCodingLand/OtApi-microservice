@@ -70,7 +70,7 @@ class DateTimeVal(ot_field):
     
     def getValueFromXML(self, xml):
         self.value = dateutil.parser.parse(xml.text)
-        self.value = json.dumps(self.value, default=date_handler)
+        self.value = json.dumps(self.value, default=date_handler)[1:-1]
         return self.value
 
        

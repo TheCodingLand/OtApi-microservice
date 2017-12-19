@@ -23,6 +23,8 @@ def create_app():
 
     # register blueprints
     from project.api.views import users_blueprint
+    from project.api.views import events_blueprint
     app.register_blueprint(users_blueprint)
+    app.register_blueprint(events_blueprint)
 
     return app

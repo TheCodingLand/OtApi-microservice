@@ -106,7 +106,8 @@ def get_all_users():
         }
     }
     return jsonify(response_object), 200
-    
+
+events_blueprint = Blueprint('events', __name__)    
 @events_blueprint.route('/events/<event_id>', methods=['GET'])
 def get_single_event(event_id):
     """Get single event details"""
@@ -119,14 +120,12 @@ def get_single_event(event_id):
         #event = event.serialize()
         event = test()
         
-        if not user:
+        if not event:
             return jsonify(response_object), 404
         else:
             response_object = {
                 'status': 'success',
-                'data': {
-                    event
-                }
+                'data': event
             }
             return jsonify(response_object), 200
     except ValueError:

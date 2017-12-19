@@ -1,5 +1,5 @@
 import xml.etree.ElementTree as ET
-from ot_field import *
+from project.ot.ot_field import *
 import re
 testxml="""<?xml version="1.0" encoding="utf-8"?>
 <soap:Envelope
@@ -98,5 +98,5 @@ class serialize(object):
         
 def test():
     data=testxml
-    builder = Builder(testxml)
-    print( builder.res)
+    builder = serialize(testxml)
+    return(builder.res)
