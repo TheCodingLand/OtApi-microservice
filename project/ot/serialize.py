@@ -1,0 +1,1 @@
+url = "http://otrcsl01.rcsl.lu/otws/v1.asmx"
