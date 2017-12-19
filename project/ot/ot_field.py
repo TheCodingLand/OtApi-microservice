@@ -1,3 +1,15 @@
+import dateutil.parser
+import json
+import datetime
+
+date_handler = lambda obj: (
+    obj.isoformat()
+    if isinstance(obj, (datetime.datetime, datetime.date))
+    else None
+)
+#json.dumps(datetime.datetime.now(), default=date_handler)
+#'"2010-04-20T20:08:21.634121"' format for date in json
+
 class ot_field(object):
     def __init__(self, name):
         self.fieldtype = ""
@@ -55,7 +67,13 @@ class DateTimeVal(ot_field):
     def __init__(self, name):
         super(DateTimeVal, self).__init__(name)
         self.fieldtype = "DateTimeVal"
+    
+    def getValueFromXML(self, xml):
+        self.value = dateutil.parser.parse(xml.text)
+        self.value = json.dumps(self.value, default=date_handler)
+        return self.value
 
+       
 
 class Text(ot_field):
     def __init__(self, name):

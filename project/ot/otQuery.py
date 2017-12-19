@@ -190,12 +190,6 @@ class otQuery():
     
     
 
-    def convAttributeforPython(self, field, value):
-        if isinstance(field, DateTimeVal):
-            #print("converting " + value)
-            return dateutil.parser.parse(value)
-        else:
-            return value
 
     def convAttributeforOT(self, field):
         if isinstance(field, DateTimeVal):

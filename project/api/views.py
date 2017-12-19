@@ -6,10 +6,12 @@ from sqlalchemy import exc
 from project.api.models import User
 from project.api import swagger
 from project import db
-from project.ot.models import Event
+from project.ot.query_ot import query_ot
+from project.ot.serialize import serialize, test
+
+
 
 users_blueprint = Blueprint('users', __name__)
-
 @users_blueprint.route('/service.json', methods=['GET'])
 def service():
     return jsonify(swagger.swagger())
@@ -106,22 +108,24 @@ def get_all_users():
     return jsonify(response_object), 200
     
 @events_blueprint.route('/events/<event_id>', methods=['GET'])
-def get_single_user(user_id):
+def get_single_event(event_id):
     """Get single event details"""
     response_object = {
         'status': 'fail',
         'message': 'Event does not exist'
     }
     try:
-        event=Event.query.get(id=event_id)
+        #event=query_ot().get(id=1234141)
+        #event = event.serialize()
+        event = test()
+        
         if not user:
             return jsonify(response_object), 404
         else:
             response_object = {
                 'status': 'success',
                 'data': {
-                 for key, value in event.iterkeys():
-                    '%s' % key : value,
+                    event
                 }
             }
             return jsonify(response_object), 200
