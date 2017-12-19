@@ -32,6 +32,29 @@ def swagger():
         }
       }
     },
+    "/events/{id}": {
+      "get": {
+        "description": "Returns an event based on a single event ID",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of Event to fetch",
+            "required": True,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "event object"
+          }
+        }
+      }
+    },
     "/users": {
       "get": {
         "description": "Returns all users",
