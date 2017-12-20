@@ -2,22 +2,20 @@
 
 
 from flask import Blueprint, jsonify, request
-from sqlalchemy import exc
-from project.api.models import User
 from project.api import swagger
-from project import db
 from project.ot.query_ot import query_ot
+from project.ot.ot_models import Event, Ticket, Category
 from project.ot.serialize import serialize, test
+#these hold our data model folder, fields list, required fields
 
 
-
-users_blueprint = Blueprint('users', __name__)
-@users_blueprint.route('/service.json', methods=['GET'])
+swagger_blueprint = Blueprint('swagger', __name__)
+@swagger_blueprint.route('/service.json', methods=['GET'])
 def service():
     return jsonify(swagger.swagger())
 
-
-@users_blueprint.route('/ping', methods=['GET'])
+base_blueprint = Blueprint('base', __name__)
+@base_blueprint.route('/ping', methods=['GET'])
 def ping_pong():
     return jsonify({
         'status': 'success',
@@ -25,88 +23,33 @@ def ping_pong():
     })
 
 
-@users_blueprint.route('/users', methods=['POST'])
-def add_user():
-    post_data = request.get_json()
-    if not post_data:
-        response_object = {
-            'status': 'fail',
-            'message': 'Invalid payload.'
-        }
-        return jsonify(response_object), 400
-    username = post_data.get('username')
-    email = post_data.get('email')
-    try:
-        user = User.query.filter_by(email=email).first()
-        if not user:
-            db.session.add(User(username=username, email=email))
-            db.session.commit()
-            response_object = {
-                'status': 'success',
-                'message': f'{email} was added!'
-            }
-            return jsonify(response_object), 201
-        else:
-            response_object = {
-                'status': 'fail',
-                'message': 'Sorry. That email already exists.'
-            }
-            return jsonify(response_object), 400
-    except exc.IntegrityError as e:
-        db.session.rollback()
-        response_object = {
-            'status': 'fail',
-            'message': 'Invalid payload.'
-        }
-        return jsonify(response_object), 400
 
-
-@users_blueprint.route('/users/<user_id>', methods=['GET'])
-def get_single_user(user_id):
-    """Get single user details"""
+ot_objects_blueprint = Blueprint('ot_objects', __name__)
+@ot_objects_blueprint.route('/ot_objects/metadata/<object_id>', methods=['GET'])
+def get_ot_object_metadata(object_id):
+    """Get single event details"""
     response_object = {
         'status': 'fail',
-        'message': 'User does not exist'
+        'message': 'Event does not exist'
     }
     try:
-        user = User.query.filter_by(id=int(user_id)).first()
-        if not user:
+        e=query_ot()
+        e.get(object_id)
+        print ("%s" % e.xml_result)
+        result=serialize(e.xml_result.decode("utf-8"))
+        ot_object=result.metadata
+        if not ot_object:
             return jsonify(response_object), 404
         else:
             response_object = {
                 'status': 'success',
-                'data': {
-                  'username': user.username,
-                  'email': user.email,
-                  'created_at': user.created_at
-                }
+                'data': ot_object
             }
             return jsonify(response_object), 200
     except ValueError:
         return jsonify(response_object), 404
 
-
-@users_blueprint.route('/users', methods=['GET'])
-def get_all_users():
-    """Get all users"""
-    users = User.query.all()
-    users_list = []
-    for user in users:
-        user_object = {
-            'id': user.id,
-            'username': user.username,
-            'email': user.email,
-            'created_at': user.created_at
-        }
-        users_list.append(user_object)
-    response_object = {
-        'status': 'success',
-        'data': {
-            'users': users_list
-        }
-    }
-    return jsonify(response_object), 200
-
+event_model=Event()
 events_blueprint = Blueprint('events', __name__)    
 @events_blueprint.route('/events/<event_id>', methods=['GET'])
 def get_single_event(event_id):
@@ -116,12 +59,27 @@ def get_single_event(event_id):
         'message': 'Event does not exist'
     }
     try:
-        #event=query_ot().get(id=1234141)
-        #event = event.serialize()
-        event = test()
-        
+        e=query_ot()
+        e.get(event_id)
+        result=serialize(e.xml_result.decode("utf-8"))
+        event=result.res
+        #event = test()
         if not event:
             return jsonify(response_object), 404
+        
+        wrong_type=False
+        unexpected_fields = []
+        for f in event.keys():
+            if f not in event_model.fields:
+                unexpected_fields.append(f)
+                wrong_type=True
+        if wrong_type == True:
+            response_object = {
+            'status': 'fail',
+            #'message': 'unexpected fields : %s' % (unexpected_fields)
+            'message': 'wrong object returned'
+            }
+            return jsonify(response_object), 400
         else:
             response_object = {
                 'status': 'success',
@@ -130,3 +88,33 @@ def get_single_event(event_id):
             return jsonify(response_object), 200
     except ValueError:
         return jsonify(response_object), 404
+
+
+tickets_blueprint = Blueprint('tickets', __name__)    
+@tickets_blueprint.route('/tickets/<ticket_id>', methods=['GET'])
+def get_single_ticket(ticket_id):
+    """Get single ticket details"""
+    response_object = {
+        'status': 'fail',
+        'message': 'Event does not exist'
+    }
+    try:
+        e=query_ot()
+        e.get(ticket_id)
+  
+        result=serialize(e.xml_result.decode("utf-8"))
+        #event = test()
+        ticket = result.res
+        if not ticket:
+            return jsonify(response_object), 404
+        else:
+            response_object = {
+                'status': 'success',
+                'data': ticket
+            }
+            return jsonify(response_object), 200
+    except ValueError:
+        return jsonify(response_object), 404
+        
+        
+

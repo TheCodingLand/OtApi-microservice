@@ -71,7 +71,10 @@ class serialize(object):
     def __init__(self,xml):
         
         self.res={ }
+        self.metadata = { }
         self.parse(xml)
+       
+        
 
 
     def getFields(self,xml):
@@ -80,9 +83,8 @@ class serialize(object):
             k = globals()[field.tag]
             name = field.attrib['name']
             f= k(name)
-           
-            self.res.update({ '%s' % name : f.getValueFromXML(field)})
-
+            self.metadata.update( { '%s' % name : field.tag } )
+            self.res.update({ '%s' % name : f.getValueFromXML(field)})       
     
     def parse(self, xml):
             xml = re.sub(' xmlns="[^"]+"', '', xml, count=1)
@@ -93,9 +95,10 @@ class serialize(object):
                 result = True
                 root = root[0]
                 id = root.attrib['id']
-            self.getFields(root)
+                self.getFields(root)
+            else:
+                self.res = False
 
-        
 def test():
     data=testxml
     builder = serialize(testxml)

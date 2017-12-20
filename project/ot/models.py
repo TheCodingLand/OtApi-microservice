@@ -7,10 +7,3 @@ class Event(object):
     
     def get(id):
         event = query_ot.get(id)
-        
-        
-    
-        
-        
-    
-    

@@ -1,8 +1,14 @@
+import requests
+import os
+import platform
+url= "http://otrcsl01.rcsl.lu/otws/v1.asmx"
+
+if platform.system() == "Windows":
+    Encoding = "cp437"
+else:
+    Encoding = "utf-8"
 
 class query_ot():
-    
-    
-    
     
     def __init__(self):
         self.body=""
@@ -17,7 +23,30 @@ class query_ot():
         """Takes ID returns a formatted object"""
         self.body = r'<Get folderPath="" recursive="true"><ObjectIDs objectIDs="%s"/></Get>' % (id)
         self.command="GetObjectList"
-    
+        self.send()
+        
+        
+    def add(self, folder, fields):
+        id = False
+        self.body = ""
+        self.command = "AddObject"
+        xmlstring = self.getfieldXmlString(fields)
+        self.body = r'%s<Object folderPath="%s">' % (self.body, folder) + \
+            r'%s' % xmlstring
+        self.body = '%s</Object>' % self.body
+        self.initQuery()
+        self.sendQuery()
+        tree = ET.fromstring(self.xml_result)
+        root = tree \
+            .find('*//{http://www.omninet.de/OtWebSvc/v1}AddObjectResult')
+        if root.attrib['success'] == "true":
+            id = root.attrib['objectId']
+        else:
+            print("couldn't add item in %s with fields %s" % (folder, fields))
+            print("request : %s" % self.xml)
+            print("response : %s" % self.xml_result)
+        return id
+
     def getField(self, id, field):
         """Takes ID and a specific ot_field to query"""
         self.body = r'<Get folderPath="" recursive="true"><ObjectIDs objectIDs="%s"/><RequiredFields>%s</RequiredFields></Get>' % (id, field.name)
@@ -43,11 +72,15 @@ class query_ot():
                    r'%s</%s></soap:Body></soap:Envelope>' \
                    % (self.body, self.command)
         
+        
     def send(self):
+        self.initQuery()
         data = self.xml.replace(r'\r\n', r'&#x000d;&#x000a;').encode("ascii", "xmlcharrefreplace")
         result = requests.post(url, data=data, headers=self.headers)
+        #print(self.body)
+        print(result.content)
         self.xml_result = result.content
-        return self
+        
                     
    
         

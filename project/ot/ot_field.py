@@ -50,6 +50,11 @@ class LongIntVal(ot_field):
         super(LongIntVal, self).__init__(name)
         self.fieldtype = "LongIntVal"
 
+class ShortIntVal(ot_field):
+    def __init__(self, name):
+        super(ShortIntVal, self).__init__(name)
+        self.fieldtype = "LongIntVal"
+        
 class BoolVal(ot_field):
     def __init__(self, name):
         super(BoolVal, self).__init__(name)

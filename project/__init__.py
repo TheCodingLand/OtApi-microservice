@@ -2,11 +2,10 @@
 
 import os
 from flask import Flask, jsonify
-from flask_sqlalchemy import SQLAlchemy
+
 
 from flask_cors import CORS
 # instantiate the db
-db = SQLAlchemy()
 
 
 def create_app():
@@ -18,13 +17,17 @@ def create_app():
     app_settings = os.getenv('APP_SETTINGS')
     app.config.from_object(app_settings)
 
-    # set up extensions
-    db.init_app(app)
-
+  
     # register blueprints
-    from project.api.views import users_blueprint
+    from project.api.views import base_blueprint
+    from project.api.views import swagger_blueprint
     from project.api.views import events_blueprint
-    app.register_blueprint(users_blueprint)
+    from project.api.views import tickets_blueprint
+    from project.api.views import ot_objects_blueprint
+    app.register_blueprint(base_blueprint)
+    app.register_blueprint(swagger_blueprint)
     app.register_blueprint(events_blueprint)
+    app.register_blueprint(tickets_blueprint)
+    app.register_blueprint(ot_objects_blueprint)
 
     return app
