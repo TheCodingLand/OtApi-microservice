@@ -54,9 +54,7 @@ class query_ot():
         self.command="GetObjectList"
         
     #def update(self, id, fields):
-    
-    
-    
+
     
           
     def send(self):
