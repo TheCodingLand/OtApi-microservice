@@ -162,6 +162,9 @@ class otQuery():
         print(self.xml_result)
         tree = ET.fromstring(self.xml_result)
         
+        
+        
+        
         root = tree \
             .find('*//{http://www.omninet.de/OtWebSvc/v1}GetObjectListResult')
         if root.attrib['success'] == "true":
@@ -186,8 +189,6 @@ class otQuery():
                 results.append(item)
             
         return results
-    
-    
     
 
 
@@ -224,6 +225,7 @@ class otQuery():
             print("couldn't build complete query : %s : %s" % (item, field))
             print("request : %s" % self.xml)
             print("response : %s" % self.xml_result)
+
 
     def update(self, item, field):
         value = self.convAttributeforOT(field)

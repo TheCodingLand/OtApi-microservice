@@ -16,9 +16,9 @@ class ot_field(object):
         self.name = name
         self.value = ""
 
-    def fieldXMLString(self, fieldname):
+    def fieldXMLString(self):
         fieldquery = r'<%s name="%s">%s</%s>' \
-            % (self.fieldtype, fieldname, self.value, self.fieldtype)
+            % (self.fieldtype, self.name, self.value, self.fieldtype)
         return fieldquery
 
     def getValueFromXML(self, xml):
@@ -32,13 +32,14 @@ class NullVal(ot_field):
     def __init(self, name):
         super(NullVal, self).__init__(name)
         self.fieldtype = "NullVal"
+        
     def getValueFromXML(self, xml):
         self.value = ""
         return self.value
-    def fieldXMLString(self, fieldname):
+        
+    def fieldXMLString(self):
         return false
 
-        
 
 class ObjectId(ot_field):
     def __init__(self, name):
@@ -91,7 +92,7 @@ class ReferenceVal(ot_field):
         super(ReferenceVal, self).__init__(name)
         self.fieldtype = "ReferenceVal"
 
-    def fieldXMLString(self, fieldname):
+    def fieldXMLString(self):
         fieldquery = r'<ReferenceVal name="%s" objectId="%s"/>' \
             % (self.name, self.value)
         return fieldquery
@@ -142,6 +143,8 @@ class ReferenceListVal(ot_field):
         return fieldquery
         
 #NOT HANDLED YET    
+
+
     
 class TimeStampedMemoVal(ot_field):
     def __init(TimeStampedMemoVal, name):
@@ -150,7 +153,7 @@ class TimeStampedMemoVal(ot_field):
     def getValueFromXML(self, xml):
         self.value = ""
         return self.value
-    def fieldXMLString(self, fieldname):
+    def fieldXMLString(self):
         return false
 
 class AttachmentsVal(ot_field):
@@ -160,6 +163,6 @@ class AttachmentsVal(ot_field):
     def getValueFromXML(self, xml):
         self.value = ""
         return self.value
-    def fieldXMLString(self, fieldname):
+    def fieldXMLString(self):
         return false
     

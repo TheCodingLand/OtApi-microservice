@@ -1,6 +1,6 @@
 class Event(object):
     def __init__(self):
-        self.folder = "01. ITSM - Service Operation\01. Event Management"
+        self.folder = r'01. ITSM - Service Operation\01. Event Management'
         self.requiredfields = []
         self.fields = {
             "Answers": "TimeStampedMemoVal",
@@ -56,7 +56,7 @@ class Event(object):
             
 class Ticket(object):
     def __init__(self):
-        self.folder = "01. ITSM - Service Operation\02. Incident Management"
+        self.folder = r'01. ITSM - Service Operation\02. Incident Management'
         self.requiredfields = ["Title", "Description", "AssociatedCategory"]
         self.fields = {
             "AffectedCMDBCIs": "ReferenceListVal",

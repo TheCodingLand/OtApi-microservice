@@ -2,7 +2,7 @@ import requests
 import os
 import platform
 url= "http://otrcsl01.rcsl.lu/otws/v1.asmx"
-
+import xml.etree.ElementTree as ET
 if platform.system() == "Windows":
     Encoding = "cp437"
 else:
@@ -13,7 +13,6 @@ class query_ot():
     def __init__(self):
         self.body=""
         self.command =""
-        command = ""
         self.headers = ""
         self.xml = ""
         self.xml_result = ""
@@ -24,25 +23,27 @@ class query_ot():
         self.body = r'<Get folderPath="" recursive="true"><ObjectIDs objectIDs="%s"/></Get>' % (id)
         self.command="GetObjectList"
         self.send()
-        
-        
-    def add(self, folder, fields):
-        id = False
-        self.body = ""
+    
+
+    def add(self, model, fields):
         self.command = "AddObject"
-        xmlstring = self.getfieldXmlString(fields)
-        self.body = r'%s<Object folderPath="%s">' % (self.body, folder) + \
-            r'%s' % xmlstring
+        fieldxml = ""
+        for field in fields:
+            print("looking for field xml string : of field %s, with value %s, class %s"%(field.name, field.value, field.fieldtype))
+            print (field.fieldXMLString())
+            fieldxml = "%s%s" % (fieldxml, field.fieldXMLString())
+        self.body = r'%s<Object folderPath="%s">' % (self.body, model.folder) + \
+            r'%s' % fieldxml
         self.body = '%s</Object>' % self.body
-        self.initQuery()
-        self.sendQuery()
+        print(self.body)
+        self.send()
         tree = ET.fromstring(self.xml_result)
         root = tree \
             .find('*//{http://www.omninet.de/OtWebSvc/v1}AddObjectResult')
         if root.attrib['success'] == "true":
             id = root.attrib['objectId']
         else:
-            print("couldn't add item in %s with fields %s" % (folder, fields))
+            print("couldn't add item in %s with fields %s" % (model.folder, fields))
             print("request : %s" % self.xml)
             print("response : %s" % self.xml_result)
         return id
@@ -53,14 +54,32 @@ class query_ot():
         self.command="GetObjectList"
         
     #def update(self, id, fields):
+    
+    
+    
+    
+          
+    def send(self):
+        self.initQuery()
+        data = self.xml.replace(r'\r\n', r'&#x000d;&#x000a;').encode("ascii", "xmlcharrefreplace")
+        print(self.headers)
+        print(data)
+        print(url)
+        result = requests.post(url, data=data, headers=self.headers)
+        #print(self.body)
+        print(result.content)
+        self.xml_result = result.content
         
-  
+                    
     def initQuery(self):
         """puts together hearders qnd command definition for the query"""
         self.headers = {'Content-Type': 'text/xml', 'charset': 'iso-8859-1',
                         'SOAPAction': '"http://www.omninet.de/OtWebSvc/v1/%s"'
                         % (self.command)}
         self.query = self.build()
+        
+        
+        
         
     def build(self):
         """puts together hearders and command definition for the query"""
@@ -71,18 +90,3 @@ class query_ot():
                    r'<%s xmlns="http://www.omninet.de/OtWebSvc/v1">' % (self.command) + \
                    r'%s</%s></soap:Body></soap:Envelope>' \
                    % (self.body, self.command)
-        
-        
-    def send(self):
-        self.initQuery()
-        data = self.xml.replace(r'\r\n', r'&#x000d;&#x000a;').encode("ascii", "xmlcharrefreplace")
-        result = requests.post(url, data=data, headers=self.headers)
-        #print(self.body)
-        print(result.content)
-        self.xml_result = result.content
-        
-                    
-   
-        
-        
-        

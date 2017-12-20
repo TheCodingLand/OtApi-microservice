@@ -78,6 +78,41 @@ def swagger():
         }
       }
     },
+    "/events": {
+      "get": {
+        "description": "Returns all events",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "event object"
+          }
+        }
+      },
+      "post": {
+        "description": "Adds a new event",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "event",
+            "in": "body",
+            "description": "Event to add",
+            "required": True,
+            "schema": {
+        
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Event added"
+          }
+        }
+      }
+    },
     "/events/{id}": {
       "get": {
         "description": "Returns an event based on a single event ID",
