@@ -1,7 +1,7 @@
 import requests
 import os
 import platform
-url= "http://otrcsl01.rcsl.lu/otws/v1.asmx"
+url= os.getenv('OT_WS_URL')
 import xml.etree.ElementTree as ET
 if platform.system() == "Windows":
     Encoding = "cp437"

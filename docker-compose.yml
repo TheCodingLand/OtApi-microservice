@@ -2,12 +2,13 @@ version: '2.1'
 
 services:
 
-  users-service:
-    container_name: users-service
+  ot-ws:
+    container_name: ot-ws
     build: ./
     volumes:
       - '.:/usr/src/app'
     environment:
+      - OT_WS_URL=http://otrcsl01.rcsl.lu/otws/v1.asmx
       - APP_SETTINGS=project.config.DevelopmentConfig
     ports:
       - 5001:5000 # expose ports - HOST:CONTAINER
@@ -21,5 +22,5 @@ services:
     environment:
       - API_URL=https://raw.githubusercontent.com/TheCodingLand/OtApi-microservice/master/swagger.json
     depends_on:
-      users-service:
+      ot-ws:
         condition: service_started
