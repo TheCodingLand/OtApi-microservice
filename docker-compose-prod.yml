@@ -2,15 +2,16 @@ version: '2.1'
 
 services:
 
-  users-service:
-    container_name: users-service
+  ot-ws:
+    container_name: ot-ws
     build: ./
     volumes:
       - '.:/usr/src/app'
-    ports:
-      - 5002:5000 # expose ports - HOST:CONTAINER
     environment:
+      - OT_WS_URL=http://otrcsl01.rcsl.lu/otws/v1.asmx
       - APP_SETTINGS=project.config.ProdConfig
+    ports:
+      - 5001:5000 # expose ports - HOST:CONTAINER
     command: gunicorn -b 0.0.0.0:5000 manage:app
       
   swagger:
@@ -19,7 +20,7 @@ services:
     ports:
       - '5100:8080' # expose ports - HOST:CONTAINER
     environment:
-      - API_URL=http://148.110.107.15:5002/service.json
+      - API_URL=https://raw.githubusercontent.com/TheCodingLand/OtApi-microservice/master/swagger.json
     depends_on:
-      users-service:
+      ot-ws:
         condition: service_started
