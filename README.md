@@ -12,6 +12,7 @@ Edit Docker-compose.yml to add your omnitracker server host name.
 Adapt ot_models.py file to your environment.
 
 ## RUNNING :
+
 `docker-compose up -d`
 
 - Web services should be available on port 5001.
