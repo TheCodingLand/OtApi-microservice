@@ -12,7 +12,6 @@ services:
       - APP_SETTINGS=project.config.DevelopmentConfig
     ports:
       - 5001:5000 # expose ports - HOST:CONTAINER
-
       
   swagger:
     container_name: swagger
