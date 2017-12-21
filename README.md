@@ -12,8 +12,9 @@ Adapt ot_models.py file to your environment.
 
 ## RUNNING :
 `docker-compose up -d`
+
+- Web services should be available on port 5001.
  
- Web services should be available on port 5001.
- Swagger api doc ui on port 5100.
+- Swagger api doc ui on port 5100.
  
  
