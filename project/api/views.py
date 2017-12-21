@@ -163,7 +163,7 @@ def get_single_event(event_id):
 ticket_model=Ticket()
 tickets_blueprint = Blueprint('tickets', __name__)    
 @tickets_blueprint.route('/tickets/<ticket_id>', methods=['GET'])
-def get_single_ticket(event_id):
+def get_single_ticket(ticket_id):
     """Get single ticket details"""
     response_object = {
         'status': 'fail',
