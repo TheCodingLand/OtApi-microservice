@@ -8,6 +8,7 @@ The goal is to spawn several web service APIs behind a load balancer, and a mess
 ## CONFIG :
 
 Edit Docker-compose.yml to add your omnitracker server host name.
+
 Adapt ot_models.py file to your environment.
 
 ## RUNNING :
