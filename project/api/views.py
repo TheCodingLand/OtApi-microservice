@@ -1,6 +1,6 @@
 # project/api/views.py
 from flask_restplus import Namespace, Resource, fields
-from project.api.models.event import event
+from project.api.models.event import event, ticket
 
 from project.api.restplus import api
 from project.ot.query_ot import query_ot
@@ -205,4 +205,52 @@ class TicketItem(Resource):
             return response_object, 404
     
 
-
+ticket_model=Ticket()
+@api.response(400, 'failed.')
+@ns.route('/tickets')
+class TicketAdd(Resource):
+    @api.response(201, 'Event successfully created.')
+    @api.expect(ticket)
+    def put(self):
+        time.sleep(1)
+        post_data = request.get_json()
+        
+        #if not post_data:
+        #    response_object = {
+        #        'status': 'fail',
+        #        'message': 'Invalid payload.'
+        #    }
+        #   return jsonify(response_object), 400
+       
+        try:
+            fields=getFields(ticket_model,post_data)
+        except:
+            response_object = {
+                'status': 'fail',
+                'message': 'Invalid payload parsing fields.'
+            }
+            return jsonify(response_object), 400
+        try:
+            r = query_ot()
+            print (ticket_model)
+            print(fields)
+            event = r.add(ticket_model,fields)
+            if event:
+                response_object = {
+                    'status': 'success',
+                    'message': 'ticket was added!',
+                    'ticket' : ticket
+                }
+                return response_object, 201
+            else:
+                response_object = {
+                    'status': 'fail',
+                    'message': 'Sorry. failed.'
+                }
+                return response_object, 400
+        except:
+            response_object = {
+                'status': 'fail',
+                'message': 'Invalid payload.'
+            }
+            return jsonify(response_object), 400
