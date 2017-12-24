@@ -1,4 +1,6 @@
 from otQuery import otQuery
+from ot_field import StringVal, ReferenceToUserVal, NullVal #manual imports to avoid workspace errors
+from ot_field import DateTimeVal, ReferenceVal
 from ot_field import *
 
 class event(object):
@@ -11,13 +13,13 @@ class event(object):
         self._responsible = ReferenceToUserVal('Responsible')
         self._number = StringVal('Number')
         self._creationdate = DateTimeVal('CreationDate')
-        self._enddate=DateTimeVal('CallFinishedDateTime')
+        self._enddate = DateTimeVal('CallFinishedDateTime')
         self._transferhistory = StringVal('TransferHistory')
         self._ticket = ReferenceVal('RelatedIncident')
-        self.createdindatabase=False
+        self.createdindatabase = False
         
     def getFromUcid(self, ucid):
-        results = otQuery().getObjectList(self.__class__, "EventUCID", [["UCID",ucid.value]])
+        results = otQuery().getObjectList(self.__class__, "EventUCID", [["UCID", ucid.value]])
         for result in results:
             return result
         return False
@@ -25,10 +27,10 @@ class event(object):
         
     
     def create(self):
-        ev=self.getFromUcid(self._UCID)
+        ev = self.getFromUcid(self._UCID)
         if ev == False:
             self.id = otQuery()\
-            .add(self.folder, [self._UCID,])
+            .add(self.folder, [self._UCID, ])
         else:
             print("found previous event id %s" % ev.id)
             self.id = ev.id

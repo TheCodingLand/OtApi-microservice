@@ -18,8 +18,6 @@ class ticket(object):
         
     def create(self):
         
-        
-        
         self.id = otQuery()\
             .add(self.folder, [self._title, self._description, self._category])
 
